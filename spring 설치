@@ -1,0 +1,33 @@
+git clone https://github.com/hongjsk/spring-petclinic-kubernetes.git
+
+sudo apt-get install maven
+sudo mvn install
+sudo apt-get install mysql-client
+
+kubectl create -f local-volumes.yaml
+kubectl create -f mysql-pv-claim.yaml
+kubectl get persistentvolume
+kubectl get persistentvolumeclaims
+
+echo -n "root" > ./username
+echo -n "petclinic" > ./password
+kubectl create secret generic mysql-credential --from-file=./username --from-file=./password
+kubectl get secrets
+kubectl get secrets/mysql-credential -o=yaml
+
+rm -rf ./username
+rm -rf ./password
+
+kubectl create -f mysql.yaml
+kubectl create -f mysql-service.yaml
+kubectl log [pod name]
+
+EXTERNAL_IP=$(kubectl get nodes -o jsonpath='{..addresses[?(@.type=="ExternalIP")].address}')
+echo $EXTERNAL_IP
+
+mysql -h $EXTERNAL_IP -u root -p -P 32001 petclinic < spring-petclinic-customers-service/src/main/resources/db/mysql/schema.sql
+mysql -h $EXTERNAL_IP -u root -p -P 32001 petclinic < spring-petclinic-visits-service/src/main/resources/db/mysql/schema.sql
+mysql -h $EXTERNAL_IP -u root -p -P 32001 petclinic < spring-petclinic-vets-service/src/main/resources/db/mysql/schema.sql
+mysql -h $EXTERNAL_IP -u root -p -P 32001 petclinic < spring-petclinic-customers-service/src/main/resources/db/mysql/data.sql
+mysql -h $EXTERNAL_IP -u root -p -P 32001 petclinic < spring-petclinic-visits-service/src/main/resources/db/mysql/data.sql
+mysql -h $EXTERNAL_IP -u root -p -P 32001 petclinic < spring-petclinic-vets-service/src/main/resources/db/mysql/data.sql
