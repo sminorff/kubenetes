@@ -10,7 +10,7 @@ kubectl get persistentvolume
 kubectl get persistentvolumeclaims
 
 echo -n "root" > ./username
-echo -n "petclinic" > ./password
+echo -n "1234" > ./password
 kubectl create secret generic mysql-credential --from-file=./username --from-file=./password
 kubectl get secrets
 kubectl get secrets/mysql-credential -o=yaml
