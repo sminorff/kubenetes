@@ -1,3 +1,4 @@
+https://github.com/spring-petclinic/spring-framework-petclinic.git
 git clone https://github.com/hongjsk/spring-petclinic-kubernetes.git
 
 sudo apt-get install maven
